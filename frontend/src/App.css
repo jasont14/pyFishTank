@@ -1,0 +1,420 @@
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h1 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar nav button {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sidebar nav button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.sidebar nav button.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h2 {
+  font-size: 1.75rem;
+  color: #1e3a5f;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-header h3 {
+  font-size: 1.125rem;
+  color: #1e3a5f;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.tank-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  background: white;
+  transition: box-shadow 0.2s;
+}
+
+.tank-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tank-card h3 {
+  font-size: 1.125rem;
+  color: #1e3a5f;
+  margin-bottom: 0.5rem;
+}
+
+.tank-card .meta {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.tank-card .stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tank-card .stat {
+  text-align: center;
+  flex: 1;
+  padding: 0.5rem;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.tank-card .stat-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e3a5f;
+}
+
+.tank-card .stat-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.tank-card .actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.fish-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  gap: 1rem;
+}
+
+.fish-card .fish-icon {
+  font-size: 2rem;
+}
+
+.fish-card .fish-info {
+  flex: 1;
+}
+
+.fish-card .fish-name {
+  font-weight: 600;
+  color: #1e3a5f;
+}
+
+.fish-card .fish-species {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.fish-card .fish-tank {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.health-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.health-badge.healthy {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.health-badge.sick {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.health-badge.recovering {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.health-badge.deceased {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+.log-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 1.25rem;
+}
+
+.log-icon.water_change { background: #dbeafe; }
+.log-icon.feeding { background: #fef3c7; }
+.log-icon.filter_clean { background: #d1fae5; }
+.log-icon.water_test { background: #e0e7ff; }
+.log-icon.equipment_check { background: #f3e8ff; }
+.log-icon.medication { background: #fce7f3; }
+
+.log-content {
+  flex: 1;
+}
+
+.log-title {
+  font-weight: 500;
+  color: #1e3a5f;
+}
+
+.log-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.log-meta {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal h3 {
+  font-size: 1.25rem;
+  color: #1e3a5f;
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.empty-state .icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card h4 {
+  font-size: 1rem;
+  color: #1e3a5f;
+  margin-bottom: 1rem;
+}
+
+.summary-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summary-stat:last-child {
+  border-bottom: none;
+}
+
+.error-message {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+@media (prefers-color-scheme: dark) {
+  .page-header h2 {
+    color: #e5e7eb;
+  }
+
+  .card {
+    background: #374151;
+  }
+
+  .card-header h3 {
+    color: #e5e7eb;
+  }
+
+  .tank-card {
+    background: #374151;
+    border-color: #4b5563;
+  }
+
+  .tank-card h3 {
+    color: #e5e7eb;
+  }
+
+  .tank-card .stat {
+    background: #4b5563;
+  }
+
+  .tank-card .stat-value {
+    color: #e5e7eb;
+  }
+
+  .fish-card {
+    background: #374151;
+    border-color: #4b5563;
+  }
+
+  .fish-card .fish-name {
+    color: #e5e7eb;
+  }
+
+  .log-item {
+    border-color: #4b5563;
+  }
+
+  .log-title {
+    color: #e5e7eb;
+  }
+
+  .modal {
+    background: #374151;
+  }
+
+  .modal h3 {
+    color: #e5e7eb;
+  }
+
+  .summary-card {
+    background: #374151;
+  }
+
+  .summary-card h4 {
+    color: #e5e7eb;
+  }
+
+  .summary-stat {
+    border-color: #4b5563;
+  }
+}

@@ -7,16 +7,19 @@ from pathlib import Path
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from ui import ConsoleUI
+from api.app import run_server
 
 
 def main():
-    """Main entry point for pyFishTank."""
+    """Main entry point for pyFishTank API server."""
     try:
-        app = ConsoleUI()
-        app.run()
+        print("Starting pyFishTank API server...")
+        print("API running at http://127.0.0.1:5001")
+        print("Frontend should be started separately with: cd frontend && npm run dev")
+        print("Press Ctrl+C to stop the server")
+        run_server(debug=True)
     except KeyboardInterrupt:
-        print("\n\nInterrupted. Goodbye!")
+        print("\n\nServer stopped. Goodbye!")
         sys.exit(0)
 
 
