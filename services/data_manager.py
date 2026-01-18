@@ -1,96 +1,114 @@
-"""Data manager for JSON file I/O operations."""
+"""Data manager for SQLite database operations."""
 
-import json
+import sqlite3
 from pathlib import Path
-from typing import TypeVar, Callable
-
-T = TypeVar("T")
+from typing import Optional
 
 
 class DataManager:
-    """Handles reading and writing data to JSON files."""
+    """Handles SQLite database operations for pyFishTank."""
 
-    def __init__(self, data_dir: str = "data"):
+    def __init__(self, db_path: str = "data/fishtank.db"):
         """Initialize the data manager.
 
         Args:
-            data_dir: Directory path for storing JSON files.
+            db_path: Path to the SQLite database file.
         """
-        self.data_dir = Path(data_dir)
+        self.db_path = Path(db_path)
         self._ensure_data_dir()
+        self._connection: Optional[sqlite3.Connection] = None
+        self._init_database()
 
     def _ensure_data_dir(self) -> None:
         """Create data directory if it doesn't exist."""
-        self.data_dir.mkdir(parents=True, exist_ok=True)
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
 
-    def _get_file_path(self, filename: str) -> Path:
-        """Get full path for a data file."""
-        return self.data_dir / filename
+    @property
+    def connection(self) -> sqlite3.Connection:
+        """Get or create database connection."""
+        if self._connection is None:
+            self._connection = sqlite3.connect(str(self.db_path))
+            self._connection.row_factory = sqlite3.Row
+        return self._connection
 
-    def load(self, filename: str) -> list[dict]:
-        """Load data from a JSON file.
+    def _init_database(self) -> None:
+        """Initialize database tables."""
+        cursor = self.connection.cursor()
 
-        Args:
-            filename: Name of the JSON file (e.g., 'tanks.json').
+        # Tanks table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tanks (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                size_gallons REAL NOT NULL,
+                tank_type TEXT NOT NULL,
+                location TEXT DEFAULT '',
+                equipment TEXT DEFAULT ''
+            )
+        """)
 
-        Returns:
-            List of dictionaries from the JSON file, or empty list if file doesn't exist.
-        """
-        file_path = self._get_file_path(filename)
-        if not file_path.exists():
-            return []
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except (json.JSONDecodeError, IOError):
-            return []
+        # Water parameters table (for current tank parameters)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS water_parameters (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                tank_id TEXT,
+                date_tested TEXT NOT NULL,
+                temperature REAL,
+                ph REAL,
+                ammonia REAL,
+                nitrite REAL,
+                nitrate REAL,
+                salinity REAL,
+                FOREIGN KEY (tank_id) REFERENCES tanks(id)
+            )
+        """)
 
-    def save(self, filename: str, data: list[dict]) -> None:
-        """Save data to a JSON file.
+        # Fish table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS fish (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                species TEXT NOT NULL,
+                tank_id TEXT NOT NULL,
+                date_added TEXT NOT NULL,
+                birth_date TEXT,
+                health_status TEXT DEFAULT 'healthy',
+                size TEXT,
+                color TEXT,
+                feeding_preferences TEXT,
+                notes TEXT,
+                FOREIGN KEY (tank_id) REFERENCES tanks(id)
+            )
+        """)
 
-        Args:
-            filename: Name of the JSON file.
-            data: List of dictionaries to save.
-        """
-        file_path = self._get_file_path(filename)
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+        # Maintenance logs table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS maintenance_logs (
+                id TEXT PRIMARY KEY,
+                tank_id TEXT NOT NULL,
+                date TEXT NOT NULL,
+                activity_type TEXT NOT NULL,
+                description TEXT NOT NULL,
+                water_params_id INTEGER,
+                FOREIGN KEY (tank_id) REFERENCES tanks(id),
+                FOREIGN KEY (water_params_id) REFERENCES water_parameters(id)
+            )
+        """)
 
-    def load_entities(
-        self, filename: str, from_dict: Callable[[dict], T]
-    ) -> list[T]:
-        """Load entities from a JSON file using a converter function.
+        self.connection.commit()
 
-        Args:
-            filename: Name of the JSON file.
-            from_dict: Function to convert dict to entity.
+    def execute(self, query: str, params: tuple = ()) -> sqlite3.Cursor:
+        """Execute a query and return the cursor."""
+        cursor = self.connection.cursor()
+        cursor.execute(query, params)
+        return cursor
 
-        Returns:
-            List of entities.
-        """
-        data = self.load(filename)
-        entities = []
-        for item in data:
-            try:
-                entities.append(from_dict(item))
-            except (KeyError, ValueError, TypeError):
-                # Skip invalid entries
-                continue
-        return entities
+    def commit(self) -> None:
+        """Commit the current transaction."""
+        self.connection.commit()
 
-    def save_entities(
-        self, filename: str, entities: list, to_dict: Callable = None
-    ) -> None:
-        """Save entities to a JSON file.
-
-        Args:
-            filename: Name of the JSON file.
-            entities: List of entities to save.
-            to_dict: Optional function to convert entity to dict.
-                     If None, uses entity.to_dict() method.
-        """
-        if to_dict:
-            data = [to_dict(e) for e in entities]
-        else:
-            data = [e.to_dict() for e in entities]
-        self.save(filename, data)
+    def close(self) -> None:
+        """Close the database connection."""
+        if self._connection:
+            self._connection.close()
+            self._connection = None
